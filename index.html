@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1F4E79">
+<title>Görünmez Kahramanlar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Düzen: tek sütun, telefon öncelikli; üstte sekmeler, ortada oyun kartı, altta eylem düğmeleri */
+:root {
+  --bg: #F3F5F8; --surface: #FFFFFF; --ink: #16222F; --muted: #5A6878; --line: #D5DCE5;
+  --navy: #1F4E79; --gold: #A67C00; --gold-soft: #FFF2CC; --gold-ink: #6B5000;
+  --fizik: #1F4E79; --kimya: #375623; --biyoloji: #843C0C;
+  --ok: #2E7D32; --bad: #B3261E;
+  --display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0F1720; --surface: #18232F; --ink: #E8EEF4; --muted: #9AA8B7; --line: #2C3A49;
+  --navy: #7FB2E5; --gold: #E0B53C; --gold-soft: #3A2F0E; --gold-ink: #F2D27A;
+  --fizik: #7FB2E5; --kimya: #95C47A; --biyoloji: #E59A6A; --ok: #7BC67E; --bad: #F2867E; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0F1720; --surface: #18232F; --ink: #E8EEF4; --muted: #9AA8B7; --line: #2C3A49;
+  --navy: #7FB2E5; --gold: #E0B53C; --gold-soft: #3A2F0E; --gold-ink: #F2D27A;
+  --fizik: #7FB2E5; --kimya: #95C47A; --biyoloji: #E59A6A; --ok: #7BC67E; --bad: #F2867E; color-scheme: dark }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 560px; margin: 0 auto; padding-block: 16px 40px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+button { font: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+header.top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--display); font-weight: 800; font-size: 1.35rem; letter-spacing: .01em; }
+.brand span { color: var(--gold); }
+.tagline { color: var(--muted); font-size: .85rem; }
+nav.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 14px 0 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px; }
+nav.tabs button { border: 0; background: transparent; color: var(--muted); padding: 9px 4px; border-radius: 9px; font-weight: 600; font-size: .92rem; }
+nav.tabs button[aria-selected="true"] { background: var(--navy); color: var(--surface); }
+
+/* Ana ekran */
+.thesis { display: grid; gap: 14px; }
+.thesis h1 { font-size: clamp(1.6rem, 6vw, 2.1rem); line-height: 1.12; font-weight: 800; }
+.thesis h1 em { font-style: normal; color: var(--gold); }
+.dots { display: grid; grid-template-columns: repeat(21, 1fr); gap: 3px; padding: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.dots i { aspect-ratio: 1; border-radius: 2px; background: var(--line); }
+.dots i.k { background: var(--gold); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); }
+.legend b { font-family: var(--mono); color: var(--ink); font-weight: 500; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+.fact .num { font-family: var(--mono); font-size: 1.5rem; color: var(--navy); }
+.fact p { margin: 2px 0 0; font-size: .85rem; color: var(--muted); }
+.cta { display: grid; gap: 10px; margin-top: 4px; }
+.btn { border: 0; border-radius: 12px; padding: 14px 16px; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.btn small { font-weight: 400; display: block; font-size: .82rem; opacity: .85; }
+.btn.primary { background: var(--navy); color: var(--surface); }
+.btn.gold { background: var(--gold-soft); color: var(--gold-ink); border: 1px solid var(--gold); }
+.btn.plain { background: var(--surface); color: var(--ink); border: 1px solid var(--line); justify-content: center; text-align: center; }
+.arrow { font-family: var(--mono); font-size: 1.2rem; }
+.note { font-size: .78rem; color: var(--muted); margin-top: 18px; }
+
+/* Kart */
+.card { background: var(--surface); border: 2px solid var(--disc, var(--navy)); border-radius: 16px; overflow: hidden; }
+.card .band { background: var(--disc); color: var(--surface); padding: 8px 14px; display: flex; justify-content: space-between; font-family: var(--display); font-weight: 700; letter-spacing: .06em; font-size: .82rem; text-transform: uppercase; }
+.card .body { padding: 16px; display: grid; gap: 12px; }
+.eyebrow { font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.card h2 { font-size: 1.3rem; line-height: 1.2; color: var(--ink); }
+.year { font-family: var(--mono); font-size: 2rem; color: var(--disc); line-height: 1; }
+.who { font-family: var(--display); font-size: 1.45rem; font-weight: 800; }
+.life { font-family: var(--mono); color: var(--muted); font-size: .85rem; }
+.stamp { border-radius: 10px; padding: 10px 12px; font-size: .9rem; }
+.stamp b { display: block; font-family: var(--display); letter-spacing: .08em; font-size: .78rem; margin-bottom: 2px; }
+.stamp.k { background: var(--gold-soft); border: 1.5px solid var(--gold); color: var(--gold-ink); }
+.stamp.e { background: var(--bg); border: 1.5px solid var(--line); color: var(--muted); }
+.flip-hint { font-size: .8rem; color: var(--muted); text-align: center; }
+.cardbtn { all: unset; display: block; width: 100%; cursor: pointer; border-radius: 16px; }
+.cardbtn:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) { .card { animation: rise .25s ease-out; } @keyframes rise { from { transform: translateY(6px); opacity: .6; } } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 999px; padding: 6px 12px; font-size: .85rem; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.pager { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 12px; }
+.pager .count { font-family: var(--mono); color: var(--muted); font-size: .85rem; }
+
+/* Oyun */
+.hud { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: .9rem; color: var(--muted); }
+.hud b { font-family: var(--mono); color: var(--ink); font-size: 1.1rem; }
+.clues { display: grid; gap: 8px; }
+.clue { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; font-size: .95rem; }
+.pts { font-family: var(--mono); font-size: .75rem; border: 1.5px solid var(--disc); color: var(--disc); border-radius: 6px; padding: 1px 6px; white-space: nowrap; }
+.clue.locked { color: var(--muted); font-style: italic; }
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.opt { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 12px 8px; font-weight: 600; font-size: .92rem; min-height: 52px; }
+.opt.wrong { border-color: var(--bad); color: var(--bad); text-decoration: line-through; }
+.opt.right { border-color: var(--ok); color: var(--ok); }
+.bonus { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--surface); border: 1px dashed var(--gold); display: grid; gap: 8px; }
+.bonus .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.msg { font-weight: 600; }
+.msg.ok { color: var(--ok); } .msg.bad { color: var(--bad); }
+.list { display: grid; gap: 6px; margin: 8px 0 0; padding: 0; list-style: none; }
+.list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; font-size: .9rem; }
+.list li .tag { font-family: var(--mono); font-size: .78rem; color: var(--muted); white-space: nowrap; }
+.list li.k { border-color: var(--gold); }
+.stack { display: grid; gap: 12px; }
+
+/* Zaman Çizelgesi */
+.tl { display: grid; gap: 4px; margin-top: 14px; }
+.tl-item { display: grid; grid-template-columns: 3.6rem 1fr; gap: 10px; align-items: baseline; padding: 9px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.tl-item .y { font-family: var(--mono); color: var(--navy); font-size: 1rem; }
+.tl-item .t { min-width: 0; font-size: .9rem; line-height: 1.35; }
+.tl-item .t small { display: block; color: var(--muted); font-size: .8rem; }
+.tl-item.k { border-color: var(--gold); background: var(--gold-soft); }
+.tl-item.k .y { color: var(--gold-ink); }
+.tl-item.new { outline: 2px solid var(--ok); outline-offset: 1px; }
+.tl-item.new.miss { outline-color: var(--bad); }
+.slot { border: 1.5px dashed var(--navy); background: transparent; color: var(--navy); border-radius: 10px; padding: 7px; font-size: .82rem; font-weight: 600; }
+.slot:hover { background: var(--surface); }
+.kbadge { display: inline-block; font-family: var(--display); font-size: .66rem; letter-spacing: .08em; color: var(--gold-ink); border: 1px solid var(--gold); border-radius: 4px; padding: 0 4px; margin-left: 4px; vertical-align: 1px; }
+</style>
+
+</head>
+<body style="margin:0">
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Görünmez <span>Kahramanlar</span></div>
+    <div class="tagline">Bilim tarihi kart oyunu</div>
+  </header>
+  <nav class="tabs" role="tablist">
+    <button id="t-ana" role="tab" data-v="ana">Başla</button>
+    <button id="t-tanis" role="tab" data-v="tanis">Tanış</button>
+    <button id="t-cizelge" role="tab" data-v="cizelge">Çizelge</button>
+    <button id="t-oyna" role="tab" data-v="oyna">Kim Bu?</button>
+  </nav>
+
+  <section id="v-ana" class="thesis">
+    <h1>Ders kitaplarındaki 252 bilim insanı atfının yalnızca <em>12’si</em> kadın.</h1>
+    <div class="dots" id="dots" aria-label="252 atıftan 12’si kadın"></div>
+    <div class="legend"><span><i class="sw" style="background:var(--gold)"></i>Kadın <b>12</b></span><span><i class="sw" style="background:var(--line)"></i>Erkek <b>240</b></span><span>2026-2027 MEB fizik, kimya, biyoloji (12 kitap)</span></div>
+    <div class="facts">
+      <div class="fact"><div class="num">88</div><p>kez anılıyor Newton’ın adı</p></div>
+      <div class="fact"><div class="num">30</div><p>kez anılıyor bütün kadınların toplamı</p></div>
+    </div>
+    <div class="cta">
+      <button class="btn gold" data-go="tanis"><span>1. Kahramanlarla tanış<small>24 kadın, 24 erkek bilim insanının kartları</small></span><span class="arrow">→</span></button>
+      <button class="btn primary" data-go="cizelge"><span>2. Zaman Çizelgesi<small>Buluşları tarih sırasına diz · isim bilgisi gerekmez</small></span><span class="arrow">→</span></button>
+      <button class="btn primary" data-go="oyna"><span>3. Kim Bu Bilim İnsanı?<small>10 kartlık tur · ipucu, isim seçimi ve kitap bonusu</small></span><span class="arrow">→</span></button>
+    </div>
+    <p class="note">Uygulama hiçbir kişisel bilgi toplamaz; puanlar yalnızca bu cihazda tutulur. TÜBİTAK 2204-A “Bilim Tarihinde Görünmez Kahramanlar” projesinin çıktısıdır.</p>
+  </section>
+
+  <section id="v-tanis" hidden>
+    <div class="chips" id="f-g">
+      <button class="chip" data-g="K">Görünmez kahramanlar</button>
+      <button class="chip" data-g="E">Kitaplardakiler</button>
+      <button class="chip" data-g="">Hepsi</button>
+    </div>
+    <div class="chips" id="f-d">
+      <button class="chip" data-d="">Tüm dersler</button>
+      <button class="chip" data-d="Fizik">Fizik</button>
+      <button class="chip" data-d="Kimya">Kimya</button>
+      <button class="chip" data-d="Biyoloji">Biyoloji</button>
+    </div>
+    <button class="cardbtn" id="tcard" aria-label="Kartı çevir"></button>
+    <p class="flip-hint" id="thint">Kartı çevirmek için dokun</p>
+    <div class="pager">
+      <button class="btn plain" id="prev">← Önceki</button>
+      <span class="count" id="tcount"></span>
+      <button class="btn plain" id="next">Sonraki →</button>
+    </div>
+  </section>
+
+  <section id="v-cizelge" hidden>
+    <div id="tline"></div>
+  </section>
+
+  <section id="v-oyna" hidden>
+    <div id="game"></div>
+  </section>
+</div>
+
+<script>
+const CARDS = [{"d": "Fizik", "g": "K", "n": "Dilhan Eryurt", "l": "1926-2012", "b": "Güneş’in Ay yüzeyine etkilerinin modellenmesi (Apollo programı)", "y": 1969, "i": ["Güneş’in milyarlarca yıl önce sanıldığından daha parlak olduğunu gösteren modeller kurdum.", "Ay’a giden astronotlar için yaptığım çalışmalar nedeniyle bir başarı ödülü aldım.", "NASA’da çalışan ilk Türk kadın bilim insanıyım; sonra ODTÜ’ye döndüm."], "k": "NASA’da Güneş’in evrimi üzerine çalıştı; Apollo Başarı Ödülü’nü aldı. ODTÜ’de astrofizik çalışmalarını başlattı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 9, s. 30"}, {"d": "Fizik", "g": "K", "n": "Emmy Noether", "l": "1882-1935", "b": "Simetri ile korunum yasaları arasındaki bağın kanıtlanması", "y": 1918, "i": ["Kadınların üniversitede ders vermesine izin verilmediği için derslerim bir erkek meslektaşımın adıyla duyuruldu.", "Fizik yasaları zamanla değişmiyorsa enerjinin neden korunduğunu matematikle kanıtladım.", "Adımı taşıyan teorem, her korunum yasasının bir simetriden doğduğunu söyler."], "k": "Noether teoremi, enerji ve momentumun korunumunu simetrilere bağlar; modern fiziğin temel taşlarındandır.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 10, s. 120-123"}, {"d": "Fizik", "g": "K", "n": "Canan Dağdeviren", "l": "1985-", "b": "Kalp atışından elektrik üreten esnek piezoelektrik cihaz", "y": 2014, "i": ["Vücuda yapışabilen, çok ince ve esnek elektronik cihazlar tasarlıyorum.", "Kalbin ve akciğerin hareketini elektrik enerjisine dönüştürmeyi başardım.", "İstanbul’da doğdum; MIT’de bir araştırma grubunu yönetiyorum."], "k": "Organ hareketlerinden enerji üreten esnek cihazlar geliştirdi; kalp pili gibi cihazların pil ömrünü uzatabilir.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 10, s. 74"}, {"d": "Fizik", "g": "K", "n": "Hertha Ayrton", "l": "1854-1923", "b": "Elektrik arkının davranışının açıklanması", "y": 1902, "i": ["Eski sokak lambalarının parlak ışığının neden titreyip tısladığını araştırdım.", "Elektrik mühendislerinin kurumuna seçilen ilk kadın üye oldum.", "Royal Society’nin Hughes Madalyası’nı alan ilk kadınım."], "k": "Elektrik arkı üzerine yaptığı çalışmaları bir kitapta topladı; Hughes Madalyası’nı alan ilk kadın oldu.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 11, s. 160"}, {"d": "Fizik", "g": "K", "n": "Henrietta Swan Leavitt", "l": "1868-1921", "b": "Yanıp sönen yıldızlarla uzaklık ölçme yöntemi", "y": 1912, "i": ["Gözlemevinde binlerce fotoğraf plakasındaki yıldızları tek tek inceledim.", "Parlaklığı düzenli değişen yıldızların ne kadar uzakta olduğunu hesaplamanın yolunu buldum.", "Hubble, evrenin genişlediğini gösterirken benim yöntemimi kullandı."], "k": "Sefeid yıldızlarında periyot ile parlaklık arasındaki ilişkiyi buldu; galaksilere uzaklıklar böyle ölçüldü.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 158"}, {"d": "Fizik", "g": "K", "n": "Cecilia Payne-Gaposchkin", "l": "1900-1979", "b": "Yıldızların hidrojen ve helyumdan oluştuğunun keşfi", "y": 1925, "i": ["Vardığım sonuç, dönemin önde gelen astronomlarınca başta \"imkânsız\" denilerek reddedildi.", "Yıldızların ışığını renklerine ayırarak neyden yapıldıklarını buldum.", "Yıldızların büyük ölçüde hidrojen ve helyumdan oluştuğunu gösterdim."], "k": "Doktora tezinde yıldızların bileşimini ortaya koydu; Harvard’da bölüm başkanı olan ilk kadın oldu.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 158"}, {"d": "Fizik", "g": "K", "n": "Chien-Shiung Wu", "l": "1912-1997", "b": "Doğanın \"ayna simetrisini\" bozduğunun deneyle kanıtlanması", "y": 1957, "i": ["Kobalt-60 atomlarını mutlak sıfıra çok yakın sıcaklıklara soğutarak bir deney yaptım.", "Doğanın bazı süreçlerde sağ ile solu ayırt edebildiğini gösterdim.", "Bu fikri öneren iki meslektaşım Nobel aldı; deneyi yapan ben alamadım."], "k": "Beta bozunumunda parite korunumunun bozulduğunu kanıtladı; Matilda Etkisi’nin bilinen örneklerindendir.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 173"}, {"d": "Fizik", "g": "K", "n": "Lise Meitner", "l": "1878-1968", "b": "Nükleer fisyonun açıklanması", "y": 1939, "i": ["Nazi Almanyası’ndan kaçmak zorunda kaldım ama araştırmamı mektuplarla sürdürdüm.", "Uranyum çekirdeğinin ikiye bölündüğünü ve büyük bir enerji açığa çıktığını açıkladım.", "Nobel yalnızca meslektaşım Otto Hahn’a verildi; 109. element benim adımı taşıyor."], "k": "Otto Frisch ile birlikte çekirdeğin bölünmesini açıkladı; Nobel Ödülü’nün dışında bırakıldı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 175"}, {"d": "Fizik", "g": "K", "n": "Feryal Özel", "l": "1975-", "b": "Samanyolu’nun merkezindeki kara deliğin ilk görüntüsü", "y": 2022, "i": ["Nötron yıldızlarının içini anlamak için yeni yöntemler geliştirdim.", "Dünya’nın dört bir yanındaki teleskopları tek bir dev teleskop gibi çalıştıran iş birliğinin kurucularındanım.", "İstanbul’da doğdum; galaksimizin merkezindeki kara deliğin görüntüsünün duyurulmasında öncü rol aldım."], "k": "Olay Ufku Teleskobu iş birliğinin kurucu üyelerindendir; Georgia Teknoloji Enstitüsü’nde fizik bölüm başkanıdır.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 186"}, {"d": "Fizik", "g": "K", "n": "Maria Goeppert-Mayer", "l": "1906-1972", "b": "Atom çekirdeğinin kabuk modeli", "y": 1949, "i": ["Yıllarca üniversitelerde maaş almadan, gönüllü olarak araştırma yaptım.", "Çekirdekteki proton ve nötronların katmanlar hâlinde dizildiğini öne sürdüm.", "Fizik alanında Nobel Ödülü alan ikinci kadınım."], "k": "Çekirdeğin kabuk modelini geliştirdi ve 1963 Nobel Fizik Ödülü’nü aldı.", "s": "Ders kitaplarında yalnızca tek cümle: Fizik 9, s. 30 (görsel yok)"}, {"d": "Kimya", "g": "K", "n": "Marie Curie", "l": "1867-1934", "b": "Polonyum ve radyumun keşfi", "y": 1898, "i": ["Laboratuvarım eski bir depoydu; tonlarca maden filizini işleyerek çalıştım.", "Keşfettiğim elementlerden birine doğduğum ülkenin adını verdim.", "İki farklı bilim dalında Nobel Ödülü alan tek kişiyim."], "k": "Radyoaktivite kavramını geliştirdi; fizik (1903) ve kimya (1911) dallarında Nobel Ödülü aldı.", "s": "Fizik 9 ve 12’de var; kimya kitaplarının hiçbirinde YOK"}, {"d": "Kimya", "g": "K", "n": "Irène Joliot-Curie", "l": "1897-1956", "b": "Yapay radyoaktivitenin keşfi", "y": 1934, "i": ["Annem de babam da Nobel ödüllü bilim insanlarıydı.", "Kararlı elementleri radyoaktif hâle getirmeyi başardım.", "Eşimle birlikte Nobel Kimya Ödülü’nü aldık; annemin izinden gittim."], "k": "Eşi Frédéric Joliot ile yapay radyoaktiviteyi keşfetti; bu izotoplar bugün nükleer tıpta kullanılıyor.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Fizik 12, s. 172"}, {"d": "Kimya", "g": "K", "n": "Ellen Swallow Richards", "l": "1842-1911", "b": "İçme suyu kalitesi için ilk büyük araştırma", "y": 1887, "i": ["Evdeki ve mutfaktaki kimyayı bilimsel olarak inceleyen yeni bir alanın öncülerindenim.", "Binlerce su örneğini analiz ederek su kalitesi standartlarının temelini attım.", "MIT’den mezun olan ilk kadınım."], "k": "Massachusetts’in içme sularını inceleyen ilk büyük araştırmayı yönetti; çevre kimyasının öncülerindendir.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Kimya 10, s. 147"}, {"d": "Kimya", "g": "K", "n": "Maud Menten", "l": "1879-1960", "b": "Enzimlerin tepkime hızını açıklayan denklem", "y": 1913, "i": ["Kimyacı olmanın yanında tıp doktoru olarak da çalıştım.", "Enzimlerin tepkimeleri ne kadar hızlandırdığını hesaplayan bir denklem geliştirdim.", "Bu denklem bugün de benim ve Alman bir meslektaşımın adıyla anılıyor."], "k": "Leonor Michaelis ile geliştirdiği Michaelis-Menten denklemi, enzim kinetiğinin temelidir.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Kimya 11, s. 60"}, {"d": "Kimya", "g": "K", "n": "Stephanie Kwolek", "l": "1923-2014", "b": "Kevlar lifinin keşfi", "y": 1965, "i": ["Aslında tıp okumak istiyordum; para biriktirmek için bir kimya şirketinde çalışmaya başladım.", "Herkesin atılmasını istediği bulanık bir çözeltiyi incelemekte ısrar ettim.", "Bulduğum lif koruyucu yeleklerde ve kasklarda kullanılıyor."], "k": "Aynı ağırlıktaki çelikten yaklaşık beş kat dayanıklı Kevlar liflerine yol açan polimeri buldu.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Kimya 12, s. 120"}, {"d": "Kimya", "g": "K", "n": "Kathleen Lonsdale", "l": "1903-1971", "b": "Benzen halkasının düzlemsel olduğunun kanıtlanması", "y": 1929, "i": ["Kristallerin içine X ışınlarıyla bakarak moleküllerin şeklini buldum.", "Royal Society’ye üye seçilen ilk iki kadından biriyim.", "Altıgen bir halkanın gerçekten düz olduğunu deneyle kanıtladım."], "k": "X-ışını kırınımıyla benzen halkasının düzlemsel olduğunu gösterdi; Kekulé’nin önerisini kanıtladı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Kimya 12, s. 126"}, {"d": "Biyoloji", "g": "K", "n": "Dorothy Crowfoot Hodgkin", "l": "1910-1994", "b": "Penisilinin molekül yapısının çözülmesi", "y": 1945, "i": ["Hastalık ellerimi şekilsizleştirse de çalışmayı bırakmadım.", "B12 vitamininin ve insülinin yapısını da çözdüm.", "Bir antibiyotiğin yapısını X ışınlarıyla ortaya çıkardım ve Nobel Kimya Ödülü aldım."], "k": "Penisilin, B12 vitamini ve insülinin yapısını çözdü; 1964 Nobel Kimya Ödülü’nü aldı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 9, s. 18"}, {"d": "Biyoloji", "g": "K", "n": "Özlem Türeci", "l": "1967-", "b": "Onay alan ilk mRNA aşısının geliştirilmesi", "y": 2020, "i": ["Kanser için kişiye özel bağışıklık tedavileri üzerinde çalışıyorum.", "Eşimle birlikte bir biyoteknoloji şirketi kurdum.", "COVID-19 pandemisinde onay alan ilk mRNA aşısının geliştirilmesine öncülük ettim."], "k": "Uğur Şahin ile BioNTech’i kurdu; mRNA aşısının geliştirilmesine öncülük etti.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 9, s. 19"}, {"d": "Biyoloji", "g": "K", "n": "Katalin Karikó", "l": "1955-", "b": "mRNA’yı bağışıklık sistemine \"görünmez\" kılan değişiklik", "y": 2005, "i": ["Araştırmalarım yıllarca destek bulamadı ve görevimden indirildim.", "mRNA’nın vücutta aşırı bağışıklık tepkisine yol açmasını önleyen küçük bir kimyasal değişiklik buldum.", "Bu buluşla mRNA aşılarının yolunu açtım ve Nobel Ödülü aldım."], "k": "Drew Weissman ile yaptığı buluş mRNA aşılarının temelini oluşturdu; 2023 Nobel Tıp Ödülü’nü aldı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 9, s. 19"}, {"d": "Biyoloji", "g": "K", "n": "Rachel Carson", "l": "1907-1964", "b": "\"Sessiz Bahar\" kitabıyla tarım ilaçlarının zararlarının duyurulması", "y": 1962, "i": ["Deniz biyoloğuydum ve okyanus üzerine çok satan kitaplar yazdım.", "Kimya şirketleri beni itibarsızlaştırmaya çalıştı ama geri adım atmadım.", "Bir kitabımla DDT’nin kuşları ve besin zincirini nasıl zehirlediğini dünyaya duyurdum."], "k": "Çalışmaları DDT’nin ABD’de tarımda yasaklanmasına ve modern çevre hareketinin doğmasına katkı sağladı.", "s": "Biyoloji 10, s. 130’da DDT anlatılıyor ama adı YOK"}, {"d": "Biyoloji", "g": "K", "n": "Rita Levi-Montalcini", "l": "1909-2012", "b": "Sinir büyüme faktörünün keşfi", "y": 1952, "i": ["Savaş yıllarında üniversiteden uzaklaştırıldım; yatak odamda laboratuvar kurdum.", "Sinir hücrelerinin büyümesini sağlayan bir protein keşfettim.", "Nobel Ödülü’nü aldığımda 77 yaşındaydım ve 103 yaşına kadar yaşadım."], "k": "Sinir büyüme faktörünü keşfetti; 1986 Nobel Tıp Ödülü’nü aldı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 11, s. 44"}, {"d": "Biyoloji", "g": "K", "n": "Türkan Saylan", "l": "1935-2009", "b": "Cüzzamla Savaş Derneği’nin kurulması", "y": 1976, "i": ["Toplumun dışladığı hastaların yanında oldum ve haklarını savundum.", "Bir hastanenin başhekimliğini yıllarca gönüllü olarak yürüttüm.", "Türkiye’de cüzzamla mücadelenin öncüsüyüm; Uluslararası Gandhi Ödülü’nü aldım."], "k": "Türkiye’de cüzzamla mücadeleye öncülük etti; Dünya Sağlık Örgütü’ne danışmanlık yaptı.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 11, s. 106"}, {"d": "Biyoloji", "g": "K", "n": "Barbara McClintock", "l": "1902-1992", "b": "\"Sıçrayan genler\"in (transpozonlar) keşfi", "y": 1950, "i": ["Mısır koçanlarındaki renkli benekleri yıllarca inceledim.", "Bulgularım uzun süre ciddiye alınmadı; yıllar sonra haklı çıktım.", "Genlerin kromozom üzerinde yer değiştirebildiğini gösterdim ve Nobel’i tek başıma aldım."], "k": "Transpozonları keşfetti; 1983’te Nobel Tıp Ödülü’nü tek başına alan ilk kadın oldu.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 12, s. 25"}, {"d": "Biyoloji", "g": "K", "n": "Nettie Stevens", "l": "1861-1912", "b": "Cinsiyeti X ve Y kromozomlarının belirlediğinin keşfi", "y": 1905, "i": ["Üniversiteye 35 yaşında başladım.", "Un kurtlarının hücrelerini mikroskopla inceledim.", "Erkek ve dişiyi belirleyen kromozomları keşfettim."], "k": "Cinsiyetin X ve Y kromozomlarıyla belirlendiğini gösterdi.", "s": "Ders kitaplarında YOK. Eklenebileceği yer: Biyoloji 12, s. 25"}, {"d": "Fizik", "g": "E", "n": "Isaac Newton", "l": "1643-1727", "b": "Hareket yasaları ve evrensel çekim yasası", "y": 1687, "i": ["Bir salgın sırasında üniversitem kapanınca evde en verimli çalışmalarımı yaptım.", "Beyaz ışığın renklerden oluştuğunu prizmayla gösterdim.", "Kuvvetin birimi benim adımı taşır."], "k": "Hareket ve çekim yasalarıyla klasik mekaniğin temelini attı.", "s": "Fizik 9, 11, 12’de 88 kez anılıyor (en çok anılan bilim insanı)"}, {"d": "Fizik", "g": "E", "n": "Galileo Galilei", "l": "1564-1642", "b": "Teleskopla Jüpiter’in uydularının keşfi", "y": 1610, "i": ["Sarkacın salınımlarını kendi nabzımla ölçtüğüm anlatılır.", "Dünya’nın Güneş’in etrafında döndüğünü savunduğum için yargılandım.", "Teleskobumla Jüpiter’in dört uydusunu keşfettim."], "k": "Deney ve gözlemi bilimin merkezine koydu; modern bilimin kurucularından sayılır.", "s": "Fizik 9, 10, 11, 12’de 54 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Michael Faraday", "l": "1791-1867", "b": "Elektromanyetik indüksiyonun keşfi", "y": 1831, "i": ["Okula çok az gittim; kitap ciltçisi çırağıyken bilimi kendi kendime öğrendim.", "Hareket eden bir mıknatısın telde akım oluşturduğunu gösterdim.", "Elektriğe karşı koruyan metal kafes benim adımla anılır."], "k": "Elektromanyetik indüksiyonu keşfetti; elektrik jeneratörlerinin temelini attı.", "s": "Fizik 9, 11, 12 ve Kimya 9, 12’de 63 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Albert Einstein", "l": "1879-1955", "b": "Özel görelilik kuramı", "y": 1905, "i": ["Çocukken bir pusulanın hep aynı yönü göstermesi beni büyüledi.", "Bir patent ofisinde çalışırken fiziği değiştiren makalelerimi yazdım.", "Enerji ile kütlenin eşdeğer olduğunu gösteren ünlü bir denklem yazdım."], "k": "Görelilik kuramlarıyla uzay, zaman ve kütleçekimi anlayışını değiştirdi.", "s": "Fizik 9 ve 12’de 47 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Niels Bohr", "l": "1885-1962", "b": "Bohr atom modeli", "y": 1913, "i": ["Danimarkalıyım; kardeşim olimpiyatlarda futbol oynadı.", "Elektronların çekirdek etrafında belirli enerji düzeylerinde bulunduğunu öne sürdüm.", "Adımı taşıyan atom modeli, hidrojenin tayf çizgilerini açıkladı."], "k": "Kuantum fikrini atom yapısına uyguladı; 1922 Nobel Fizik Ödülü’nü aldı.", "s": "Fizik 11, 12 ve Kimya 9’da 49 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Daniel Bernoulli", "l": "1700-1782", "b": "Akışkanlarda hız ve basınç ilişkisi", "y": 1738, "i": ["Ailem kuşaklar boyu ünlü matematikçiler yetiştirdi.", "\"Hidrodinamik\" adlı bir kitap yazdım.", "Akışkan hızlandıkça basıncının azaldığını gösterdim; uçak kanatları bu ilkeyle açıklanır."], "k": "Akışkanlar mekaniğinin temel ilkelerinden birini ortaya koydu.", "s": "Fizik 9’da 34 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Georg Simon Ohm", "l": "1789-1854", "b": "Akım, gerilim ve direnç arasındaki ilişki", "y": 1827, "i": ["Bir lise öğretmeniydim; buluşum başta küçümsendi.", "Tellerden geçen akımı sabırla ölçerek bir yasa buldum.", "Direncin birimi benim adımı taşır."], "k": "Akım, gerilim ve direnç arasındaki ilişkiyi Ohm yasasıyla açıkladı.", "s": "Fizik 10 ve 11’de 40 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Henri Becquerel", "l": "1852-1908", "b": "Radyoaktivitenin keşfi", "y": 1896, "i": ["Babam ve dedem de fizikçiydi.", "Çekmecede bıraktığım uranyum tuzlarının fotoğraf plakasını kararttığını fark ettim.", "Radyoaktivitenin birimi benim adımı taşır."], "k": "Uranyumun kendiliğinden ışıma yaptığını keşfetti; 1903 Nobel Fizik Ödülü’nü Curie’lerle paylaştı.", "s": "Fizik 12’de 11 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Edwin Hubble", "l": "1889-1953", "b": "Evrenin genişlediğinin keşfi", "y": 1929, "i": ["Astronom olmadan önce hukuk okudum.", "Andromeda’nın Samanyolu dışında ayrı bir galaksi olduğunu gösterdim.", "Uzak galaksilerin bizden uzaklaştığını buldum; bir uzay teleskobu adımı taşıyor."], "k": "Galaksilerin birbirinden uzaklaştığını göstererek genişleyen evren anlayışının temelini attı.", "s": "Fizik 11 ve 12’de 6 kez anılıyor"}, {"d": "Fizik", "g": "E", "n": "Cezeri", "l": "1136-1206", "b": "Otomatik makineler üzerine kitap", "y": 1206, "i": ["Artuklu sarayında baş mühendis olarak çalıştım.", "Su gücüyle çalışan saatler ve otomatik makineler tasarladım.", "Robotik ve sibernetiğin öncülerinden sayılan bir kitap yazdım."], "k": "Otomatik makineleri çizimleriyle anlattığı kitabıyla mühendislik tarihinin öncülerindendir.", "s": "Fizik 9, 10, 11’de 15 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Dmitri Mendeleyev", "l": "1834-1907", "b": "Periyodik tablo", "y": 1869, "i": ["Sibirya’da doğdum; kalabalık bir ailenin en küçük çocuklarındandım.", "Henüz keşfedilmemiş elementlerin özelliklerini önceden tahmin ettim.", "Elementleri özelliklerine göre bir tabloya yerleştirdim."], "k": "Periyodik tabloyu düzenledi ve boş bıraktığı yerlere gelecek elementleri öngördü.", "s": "Kimya 9’da 10 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Henry Le Chatelier", "l": "1850-1936", "b": "Kimyasal denge ilkesi", "y": 1884, "i": ["Fransız bir maden mühendisiydim; çimento ve metaller üzerine çalıştım.", "Dengedeki bir sisteme dışarıdan etki edilince sistemin bu etkiyi azaltacak yönde tepki verdiğini söyledim.", "Kimyasal dengeye ilişkin ilke benim adımla anılır."], "k": "Denge ilkesi, endüstride verimli kimyasal üretimin temel araçlarından biridir.", "s": "Kimya 11 ve 12’de 57 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Gilbert N. Lewis", "l": "1875-1946", "b": "Elektron çifti bağı ve nokta yapıları", "y": 1916, "i": ["Nobel Ödülü’ne defalarca aday gösterildim ama hiç kazanamadım.", "Kimyasal bağın iki atom arasında paylaşılan elektron çifti olduğunu öne sürdüm.", "Değerlik elektronlarını noktalarla gösteren yapılar benim adımı taşır."], "k": "Kovalent bağı elektron çifti kavramıyla açıkladı; asit-baz tanımına da katkı yaptı.", "s": "Kimya 9, 12 ve Fizik 10, 12’de 65 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Amedeo Avogadro", "l": "1776-1856", "b": "Eşit hacimli gazların eşit sayıda tanecik içerdiği hipotezi", "y": 1811, "i": ["Önce hukukçu olarak çalıştım, sonra fiziğe yöneldim.", "Aynı koşullarda eşit hacimli gazların eşit sayıda tanecik içerdiğini öne sürdüm.", "Bir moldeki tanecik sayısı benim adımla anılır."], "k": "Atom ve molekül kavramlarının ayrılmasına katkı yaptı.", "s": "Kimya 9 ve 10’da 24 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Ernest Rutherford", "l": "1871-1937", "b": "Atom çekirdeğinin keşfi", "y": 1911, "i": ["Yeni Zelanda’da bir çiftlikte büyüdüm.", "Altın levhaya gönderdiğim parçacıkların bazılarının geri sektiğini gördüm.", "Atomun merkezinde küçük ve yoğun bir çekirdek olduğunu buldum."], "k": "Altın levha deneyiyle çekirdekli atom modelini ortaya koydu; 1908 Nobel Kimya Ödülü’nü aldı.", "s": "Kimya 9 ve Fizik 12’de 20 kez anılıyor"}, {"d": "Kimya", "g": "E", "n": "Antoine Lavoisier", "l": "1743-1794", "b": "Kütlenin korunumu yasası", "y": 1789, "i": ["Vergi toplayıcılığı da yaptım; bu görev hayatıma mal oldu.", "Eşim deneylerimi çizdi ve kayıtlarımı tuttu.", "Kimyasal tepkimelerde kütlenin korunduğunu gösterdim."], "k": "Modern kimyanın kurucusu sayılır; yanmayı oksijenle açıkladı.", "s": "Kimya 9 ve 10’da 5 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Gregor Mendel", "l": "1822-1884", "b": "Kalıtım yasaları", "y": 1866, "i": ["Bir manastırda keşiştim.", "Binlerce bezelye bitkisini çaprazladım.", "Özelliklerin kuşaktan kuşağa belirli oranlarla aktarıldığını gösterdim."], "k": "Bezelye deneyleriyle kalıtımın temel kurallarını ortaya koydu; genetiğin babası sayılır.", "s": "Biyoloji 9 ve 12’de 6 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Alexander Fleming", "l": "1881-1955", "b": "Penisilinin keşfi", "y": 1928, "i": ["Laboratuvarımın dağınıklığıyla tanınırdım.", "Tatilden dönünce bir petri kabındaki küfün bakterileri öldürdüğünü fark ettim.", "İlk antibiyotiği keşfettim."], "k": "Penisilini keşfetti; 1945 Nobel Tıp Ödülü’nü Florey ve Chain ile paylaştı.", "s": "Biyoloji 9’da 19 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Francis Crick", "l": "1916-2004", "b": "DNA’nın çift sarmal modeli", "y": 1953, "i": ["İkinci Dünya Savaşı’nda deniz mayınları üzerinde çalışan bir fizikçiydim.", "Genç bir Amerikalı meslektaşımla birlikte metal parçalardan bir model kurdum.", "DNA’nın çift sarmal yapısını açıkladık; bunda Rosalind Franklin’in fotoğrafları kritik rol oynadı."], "k": "James Watson ile DNA’nın çift sarmal modelini önerdi; 1962 Nobel Tıp Ödülü’nü aldı.", "s": "Biyoloji 9 ve 12’de 8 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Robert Hooke", "l": "1635-1703", "b": "Hücrenin adlandırılması", "y": 1665, "i": ["Esnek cisimlerin uzamasıyla ilgili bir yasa da benim adımı taşır.", "Kendi yaptığım mikroskopla gözlemlerimi çizimlerle bir kitapta topladım.", "Mantar dokusunda gördüğüm küçük odacıklara \"hücre\" adını verdim."], "k": "Mikroskop gözlemleriyle \"hücre\" kavramını bilime kazandırdı.", "s": "Biyoloji 9 ve Fizik 12’de 4 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Edward Jenner", "l": "1749-1823", "b": "Çiçek aşısı", "y": 1796, "i": ["İngiltere’de bir köy doktoruydum.", "Sağmal ineklerden bulaşan hafif bir hastalığın insanları koruduğunu fark ettim.", "Çiçek hastalığına karşı aşı yöntemini geliştirdim."], "k": "Aşılamanın bilimsel temelini attı; çiçek hastalığı sonunda dünyadan silindi.", "s": "Biyoloji 11’de 1 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "İbn-i Sina", "l": "980-1037", "b": "\"El-Kanun fi’t-Tıb\" adlı tıp ansiklopedisi", "y": 1025, "i": ["Buhara yakınlarında doğdum; gençken saray hekimi oldum.", "Bazı hastalıkların su ve toprak yoluyla yayılabileceğini yazdım.", "Yazdığım tıp kitabı Avrupa’da yüzyıllarca ders kitabı olarak okutuldu."], "k": "Tıp ve felsefe alanındaki eserleriyle yüzyıllar boyunca etkili oldu (eserin yılı yaklaşıktır).", "s": "Biyoloji 9, 11, 12, Fizik 11 ve Kimya 9’da 24 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Charles Darwin", "l": "1809-1882", "b": "Doğal seçilim kuramı (\"Türlerin Kökeni\")", "y": 1859, "i": ["Gençliğimde beş yıl süren bir gemi yolculuğuna çıktım.", "Galapagos Adaları’ndaki canlıları inceledim.", "Doğal seçilim kuramını açıklayan bir kitap yazdım."], "k": "Doğal seçilim yoluyla evrim kuramını ortaya koydu.", "s": "Biyoloji 12’de 7 kez anılıyor"}, {"d": "Biyoloji", "g": "E", "n": "Hans Krebs", "l": "1900-1981", "b": "Sitrik asit döngüsünün keşfi", "y": 1937, "i": ["Nazi Almanyası’ndan ayrılıp İngiltere’de çalışmaya devam ettim.", "Hücrede besinlerden enerji elde edilen bir tepkimeler döngüsünü açıkladım.", "Hücresel solunumdaki sitrik asit döngüsü benim adımla anılır."], "k": "Hücresel solunumun merkezindeki döngüyü açıkladı; 1953 Nobel Tıp Ödülü’nü aldı.", "s": "Biyoloji 10 ve 12’de 5 kez anılıyor"}];
+const DISC = { Fizik: 'var(--fizik)', Kimya: 'var(--kimya)', Biyoloji: 'var(--biyoloji)' };
+const ROUND = 10;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+// Kitapta var mı? Kadın kartları "Hayır"; Curie (fizikte var) ve Goeppert-Mayer (tek cümle) için iki yanıt da doğru.
+const bonusOk = (c, ans) => c.g === 'E' ? ans === 'Evet' : (c.n === 'Marie Curie' || c.n === 'Maria Goeppert-Mayer') ? true : ans === 'Hayır';
+
+function back(c) {
+  const k = c.g === 'K';
+  return `<div class="card" style="--disc:${DISC[c.d]}"><div class="band"><span>${esc(c.d)}</span><span>${c.y}</span></div>
+    <div class="body"><div class="year">${c.y}</div>
+    <div><div class="who">${esc(c.n)}</div><div class="life">${esc(c.l)}</div></div>
+    <div>${esc(c.k)}</div>
+    <div class="stamp ${k ? 'k' : 'e'}"><b>${k ? 'GÖRÜNMEZ KAHRAMAN' : 'DERS KİTAPLARINDA'}</b>${esc(c.s)}</div></div></div>`;
+}
+function front(c) {
+  return `<div class="card" style="--disc:${DISC[c.d]}"><div class="band"><span>${esc(c.d)}</span><span>Buluş</span></div>
+    <div class="body"><div class="eyebrow">Buluş / keşif</div><h2>${esc(c.b)}</h2>
+    <div class="clues">${c.i.map((t, j) => `<div class="clue"><span class="pts">${3 - j} puan</span><span>${esc(t)}</span></div>`).join('')}</div></div></div>`;
+}
+
+/* Sekmeler */
+const VIEWS = ['ana', 'tanis', 'cizelge', 'oyna'];
+function show(v) {
+  if (!VIEWS.includes(v)) v = 'ana';
+  if (v === 'cizelge' && !tl.line) newLine();
+  VIEWS.forEach(x => { document.getElementById('v-' + x).hidden = x !== v; document.getElementById('t-' + x).setAttribute('aria-selected', x === v); });
+  if (v === 'oyna' && !game.cards) newGame();
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('[data-v],[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.v || b.dataset.go)));
+
+/* Ana ekran noktaları: 252 atıf, 12 kadın */
+document.getElementById('dots').innerHTML = Array.from({ length: 252 }, (_, i) => `<i class="${i < 12 ? 'k' : ''}"></i>`).join('');
+
+/* Tanış */
+const tan = { g: 'K', d: '', i: 0, flipped: false, list: [] };
+function tanFilter() {
+  tan.list = CARDS.filter(c => (!tan.g || c.g === tan.g) && (!tan.d || c.d === tan.d)).sort((a, b) => a.y - b.y);
+  tan.i = 0; tan.flipped = false; tanDraw();
+  document.querySelectorAll('#f-g .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === tan.g));
+  document.querySelectorAll('#f-d .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === tan.d));
+}
+function tanDraw() {
+  const c = tan.list[tan.i];
+  document.getElementById('tcard').innerHTML = tan.flipped ? back(c) : front(c);
+  document.getElementById('thint').textContent = tan.flipped ? 'Buluşa dönmek için dokun' : 'Kim olduğunu görmek için dokun';
+  document.getElementById('tcount').textContent = `${tan.i + 1} / ${tan.list.length}`;
+}
+document.getElementById('tcard').addEventListener('click', () => { tan.flipped = !tan.flipped; tanDraw(); });
+document.getElementById('prev').addEventListener('click', () => { tan.i = (tan.i - 1 + tan.list.length) % tan.list.length; tan.flipped = false; tanDraw(); });
+document.getElementById('next').addEventListener('click', () => { tan.i = (tan.i + 1) % tan.list.length; tan.flipped = false; tanDraw(); });
+document.querySelectorAll('#f-g .chip').forEach(b => b.addEventListener('click', () => { tan.g = b.dataset.g; tanFilter(); }));
+document.querySelectorAll('#f-d .chip').forEach(b => b.addEventListener('click', () => { tan.d = b.dataset.d; tanFilter(); }));
+tanFilter();
+
+/* Kim Bu Bilim İnsanı? */
+const game = {};
+function newGame() {
+  const k = shuffle(CARDS.filter(c => c.g === 'K')).slice(0, ROUND / 2);
+  const e = shuffle(CARDS.filter(c => c.g === 'E')).slice(0, ROUND / 2);
+  Object.assign(game, { cards: shuffle(k.concat(e)), idx: 0, score: 0, log: [] });
+  startCard();
+}
+function startCard() {
+  const c = game.cards[game.idx];
+  const others = shuffle(CARDS.filter(x => x.d === c.d && x.n !== c.n)).slice(0, 3);
+  Object.assign(game, { cur: c, opts: shuffle(others.concat(c)).map(x => x.n), open: 1, wrong: [], phase: 'guess', pts: 0, bonus: null });
+  drawGame();
+}
+function drawGame() {
+  const c = game.cur, el = document.getElementById('game');
+  const hud = `<div class="hud"><span>Kart <b>${game.idx + 1}</b> / ${ROUND}</span><span>Puan <b>${game.score}</b></span></div>`;
+  if (game.phase === 'end') return drawEnd(el);
+  if (game.phase === 'reveal') {
+    const ok = game.pts > 0;
+    el.innerHTML = hud + `<div class="stack">
+      <p class="msg ${ok ? 'ok' : 'bad'}">${ok ? `Doğru! +${game.pts} puan` : 'Bu kez bilinemedi.'}${game.bonus === null ? '' : game.bonus ? ' · Kitap bonusu +1' : ' · Kitap bonusu kaçtı'}</p>
+      ${back(c)}
+      <button class="btn primary" id="nextc"><span>${game.idx + 1 < ROUND ? 'Sonraki kart' : 'Sonuçları gör'}</span><span class="arrow">→</span></button></div>`;
+    document.getElementById('nextc').onclick = () => { game.idx++; if (game.idx < ROUND) startCard(); else { game.phase = 'end'; drawGame(); } };
+    return;
+  }
+  const clues = c.i.map((t, j) => j < game.open
+    ? `<div class="clue"><span class="pts">${3 - j} puan</span><span>${esc(t)}</span></div>`
+    : `<div class="clue locked"><span class="pts">${3 - j} puan</span><span>Yanlış tahminde açılır</span></div>`).join('');
+  let below = '';
+  if (game.phase === 'guess') {
+    below = `<div class="options">${game.opts.map((n, j) => `<button class="opt ${game.wrong.includes(n) ? 'wrong' : ''}" data-o="${j}" ${game.wrong.includes(n) ? 'disabled' : ''}>${esc(n)}</button>`).join('')}</div>`;
+  } else {
+    below = `<div class="bonus"><div><b>Kitap bonusu:</b> Bu bilim insanı ders kitaplarımızda var mı?</div>
+      <div class="row"><button class="btn plain" data-b="Evet">Evet</button><button class="btn plain" data-b="Hayır">Hayır</button></div></div>`;
+  }
+  el.innerHTML = hud + `<div class="card" style="--disc:${DISC[c.d]}"><div class="band"><span>${esc(c.d)}</span><span>Buluş</span></div>
+    <div class="body"><div class="eyebrow">Buluş / keşif</div><h2>${esc(c.b)}</h2><div class="clues">${clues}</div></div></div>` + below;
+  el.querySelectorAll('[data-o]').forEach(b => b.onclick = () => guess(game.opts[+b.dataset.o]));
+  el.querySelectorAll('[data-b]').forEach(b => b.onclick = () => answerBonus(b.dataset.b));
+}
+function guess(n) {
+  const c = game.cur;
+  if (n === c.n) { game.pts = 4 - game.open; game.phase = 'bonus'; }
+  else { game.wrong.push(n); if (game.open < 3) game.open++; else { game.pts = 0; game.phase = 'bonus'; } }
+  drawGame();
+}
+function answerBonus(a) {
+  const c = game.cur; game.bonus = bonusOk(c, a);
+  game.score += game.pts + (game.bonus ? 1 : 0);
+  game.log.push({ c, pts: game.pts, bonus: game.bonus });
+  game.phase = 'reveal'; drawGame();
+}
+function drawEnd(el) {
+  const best = Math.max(+store.get('gk-best') || 0, game.score); store.set('gk-best', best);
+  const metK = game.log.filter(x => x.c.g === 'K');
+  el.innerHTML = `<div class="stack"><h2 style="font-size:1.6rem">Tur bitti: ${game.score} puan</h2>
+    <p style="margin:0;color:var(--muted)">En yüksek puanın: <b style="font-family:var(--mono);color:var(--ink)">${best}</b> / ${ROUND * 4}</p>
+    <div><div class="eyebrow">Bu turda tanıştığın görünmez kahramanlar</div>
+    <ul class="list">${metK.map(x => `<li class="k"><span>${esc(x.c.n)}</span><span class="tag">${x.c.y} · ${esc(x.c.d)}</span></li>`).join('')}</ul></div>
+    <div><div class="eyebrow">Tüm kartlar</div>
+    <ul class="list">${game.log.map(x => `<li class="${x.c.g === 'K' ? 'k' : ''}"><span>${esc(x.c.n)}</span><span class="tag">${x.pts ? '+' + x.pts : '0'}${x.bonus ? ' +1' : ''}</span></li>`).join('')}</ul></div>
+    <button class="btn primary" id="again"><span>Yeni tur</span><span class="arrow">↻</span></button>
+    <button class="btn gold" data-go2="tanis"><span>Kartlara tekrar bak</span><span class="arrow">→</span></button></div>`;
+  document.getElementById('again').onclick = newGame;
+  el.querySelector('[data-go2]').onclick = () => show('tanis');
+}
+
+/* Zaman Çizelgesi: buluşu doğru tarih aralığına yerleştir; yanlış da olsa kart doğru yerine girer, böylece çizelge öğretir */
+const tl = {};
+function newLine() {
+  const k = shuffle(CARDS.filter(c => c.g === 'K')).slice(0, ROUND / 2);
+  const e = shuffle(CARDS.filter(c => c.g === 'E')).slice(0, ROUND / 2 + 1);
+  const deck = shuffle(k.concat(e));
+  Object.assign(tl, { line: [deck.pop()], deck, ok: 0, done: 0, last: null, hit: null });
+  drawLine();
+}
+function fits(c, s) {
+  const L = tl.line;
+  return (s === 0 || L[s - 1].y <= c.y) && (s === L.length || c.y <= L[s].y);
+}
+function place(s) {
+  const c = tl.deck[tl.deck.length - 1];
+  tl.hit = fits(c, s); if (tl.hit) tl.ok++;
+  tl.deck.pop(); tl.done++; tl.last = c;
+  let at = tl.line.findIndex(x => x.y > c.y); if (at < 0) at = tl.line.length;
+  tl.line.splice(at, 0, c);
+  drawLine();
+}
+function lineItem(c) {
+  const cls = ['tl-item', c.g === 'K' ? 'k' : '', c === tl.last ? 'new' : '', c === tl.last && !tl.hit ? 'miss' : ''].join(' ');
+  return `<div class="${cls}"><span class="y">${c.y}</span><span class="t">${esc(c.b)}<small>${esc(c.n)}${c.g === 'K' ? '<span class="kbadge">GÖRÜNMEZ KAHRAMAN</span>' : ''}</small></span></div>`;
+}
+function drawLine() {
+  const el = document.getElementById('tline');
+  const hud = `<div class="hud"><span>Kart <b>${Math.min(tl.done + (tl.last ? 0 : 1), ROUND)}</b> / ${ROUND}</span><span>Doğru <b>${tl.ok}</b></span></div>`;
+  const placing = tl.deck.length && tl.last === null;
+  let top = '';
+  if (tl.last) {
+    const c = tl.last;
+    top = `<div class="stack"><p class="msg ${tl.hit ? 'ok' : 'bad'}" style="margin:0">${tl.hit ? 'Doğru yer!' : 'Yanlış yer.'} ${esc(c.b)}: <b>${c.y}</b>, ${esc(c.n)}${c.g === 'K' ? ' (kitaplarda görünmeyen bir kadın bilim insanı)' : ''}.</p>
+      <button class="btn primary" id="tl-next"><span>${tl.deck.length ? 'Sonraki kart' : 'Sonuçları gör'}</span><span class="arrow">→</span></button></div>`;
+  } else if (placing) {
+    const c = tl.deck[tl.deck.length - 1];
+    top = `<div class="card" style="--disc:${DISC[c.d]}"><div class="band"><span>${esc(c.d)}</span><span>Yıl?</span></div>
+      <div class="body"><div class="eyebrow">Bu buluş ne zaman yapıldı?</div><h2>${esc(c.b)}</h2>
+      <div class="flip-hint" style="text-align:left">Çizelgede doğru aralıktaki “Buraya yerleştir” düğmesine dokun. Aynı yıllar her iki sırada da doğrudur.</div></div></div>`;
+  } else {
+    const kn = tl.line.filter(x => x.g === 'K');
+    top = `<div class="stack"><h2 style="font-size:1.6rem">Çizelge tamam: ${tl.ok} / ${ROUND} doğru</h2>
+      <p style="margin:0">Bu çizelgedeki buluşların <b>${kn.length}</b> tanesini kadın bilim insanları yaptı: ${kn.map(x => esc(x.n)).join(', ')}.</p>
+      <button class="btn primary" id="tl-again"><span>Yeni çizelge</span><span class="arrow">↻</span></button>
+      <button class="btn gold" id="tl-quiz"><span>Şimdi Kim Bu Bilim İnsanı? oyna</span><span class="arrow">→</span></button></div>`;
+  }
+  let rows = '';
+  tl.line.forEach((c, s) => {
+    if (placing) rows += `<button class="slot" data-s="${s}">Buraya yerleştir${s === 0 ? ' (en eski)' : ''}</button>`;
+    rows += lineItem(c);
+  });
+  if (placing) rows += `<button class="slot" data-s="${tl.line.length}">Buraya yerleştir (en yeni)</button>`;
+  el.innerHTML = hud + top + `<div class="tl">${rows}</div>`;
+  el.querySelectorAll('[data-s]').forEach(b => b.onclick = () => place(+b.dataset.s));
+  const n = document.getElementById('tl-next'); if (n) n.onclick = () => { tl.last = null; drawLine(); };
+  const a = document.getElementById('tl-again'); if (a) a.onclick = newLine;
+  const q = document.getElementById('tl-quiz'); if (q) q.onclick = () => show('oyna');
+}
+
+show((location.hash || '').slice(1));
+</script>
+
+</body>
+</html>
